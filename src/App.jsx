@@ -175,13 +175,38 @@ function Home({ onNavigate }) {
         </div>
       </div>
 
+      {/* ── Resources ── */}
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 32px 48px" }}>
+        <a href="https://counterfactual-designs.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", display: "block" }}>
+          <div style={{
+            background: "linear-gradient(135deg, #2c2418 0%, #3d3529 100%)",
+            border: `1px solid ${C.border}`, borderRadius: 10, padding: "28px 32px",
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+            cursor: "pointer", transition: "all 0.2s",
+          }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.teal; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = C.border; }}
+          >
+            <div>
+              <div style={{ fontSize: 11, letterSpacing: 3, color: "#d4a76a", fontWeight: 600, textTransform: "uppercase", marginBottom: 8 }}>
+                From the Author
+              </div>
+              <div style={{ fontSize: 18, fontWeight: 700, color: "#f5f0e8", marginBottom: 6 }}>
+                counterfactual-designs.com
+              </div>
+              <div style={{ fontSize: 13, color: "#c4b8a8", lineHeight: 1.6 }}>
+                Steve Kromer's practice — consulting, training, and publications on counterfactual design for M&V professionals.
+              </div>
+            </div>
+            <div style={{ fontSize: 24, color: "#d4a76a", marginLeft: 24, flexShrink: 0 }}>→</div>
+          </div>
+        </a>
+      </div>
+
       {/* ── Footer ── */}
       <div style={{ borderTop: `1px solid ${C.border}`, padding: "32px", textAlign: "center" }}>
         <div style={{ fontSize: 12, color: C.textDim }}>
           Companion: <a href="https://mv-course.vercel.app" style={{ color: C.teal, textDecoration: "none" }}>IPMVP Implementation Course →</a>
-        </div>
-        <div style={{ fontSize: 12, color: C.textDim, marginTop: 8 }}>
-          <a href="https://counterfactual-designs.com" style={{ color: C.teal, textDecoration: "none" }}>counterfactual-designs.com</a>
         </div>
         <div style={{ fontSize: 11, color: C.textDim, marginTop: 8 }}>
           © 2024 Steve Kromer · SKEE · Based on <em>The Role of the M&V Professional</em> (River Publishers)
