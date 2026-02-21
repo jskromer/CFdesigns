@@ -180,6 +180,9 @@ function Home({ onNavigate }) {
         <div style={{ fontSize: 12, color: C.textDim }}>
           Companion: <a href="https://mv-course.vercel.app" style={{ color: C.teal, textDecoration: "none" }}>IPMVP Implementation Course →</a>
         </div>
+        <div style={{ fontSize: 12, color: C.textDim, marginTop: 8 }}>
+          <a href="https://counterfactual-designs.com" style={{ color: C.teal, textDecoration: "none" }}>counterfactual-designs.com</a>
+        </div>
         <div style={{ fontSize: 11, color: C.textDim, marginTop: 8 }}>
           © 2024 Steve Kromer · SKEE · Based on <em>The Role of the M&V Professional</em> (River Publishers)
         </div>
