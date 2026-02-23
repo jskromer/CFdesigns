@@ -1,6 +1,16 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
+import StatsFundamentals from "./Fundamentals.jsx";
+import MVWorkbench from "./Workbench.jsx";
+import ArchitectureOfUncertainty from "./ArchitectureOfUncertainty.jsx";
+import UncertaintyPedagogy from "./UncertaintyPedagogy.jsx";
+import BeyondOneVariable from "./BeyondOneVariable.jsx";
+import SimulationExplainer from "./SimulationExplainer.jsx";
+import CaseStudies from "./CaseStudies.jsx";
+import BoundaryExplainer from "./BoundaryExplainer.jsx";
+import DurationExplainer from "./DurationExplainer.jsx";
+import CVrmseModule from "./CVrmseModule.jsx";
 
-/* ───── palette ───── */
+/* ───── Palette (warm cream) ───── */
 const C = {
   bg: "#f5f0e8", surface: "#ebe5d9", card: "#ffffff",
   border: "#d4cbbf", white: "#1a1612", text: "#3d3529",
@@ -10,279 +20,256 @@ const C = {
   blue: "#2c6fad", blueDim: "rgba(44,111,173,0.06)",
   amber: "#a67c28", amberDim: "rgba(166,124,40,0.08)",
   violet: "#7c5cbf", violetDim: "rgba(124,92,191,0.06)",
+  green: "#2d7d46", greenDim: "rgba(45,125,70,0.08)",
 };
 
-/* ───── The Three Dimensions ───── */
-const DIMENSIONS = [
-  {
-    id: "boundary", num: "01", label: "Boundary",
-    question: "What does the meter see?",
-    description: "The measurement boundary determines what your model can tell you — and what it hides. Whole facility captures everything including noise. Retrofit isolation gives a clean signal but misses interactions.",
-    color: C.rose, dimColor: C.roseDim,
-    status: "ready",
-    tags: ["Whole Facility", "Retrofit Isolation", "Interactive Effects", "Single-Line Diagrams"],
-  },
-  {
-    id: "model", num: "02", label: "Model Form",
-    question: "How do you represent what would have happened?",
-    description: "Statistical models learn from data — fast, transparent, testable. Physical models encode physics — flexible, explainable, expensive. The choice shapes what you can defend.",
-    color: C.blue, dimColor: C.blueDim,
-    status: "ready",
-    tags: ["Statistical", "Physical", "Bayesian Calibration", "Change-Point", "TOWT"],
-  },
-  {
-    id: "duration", num: "03", label: "Duration",
-    question: "Which data trains the counterfactual?",
-    description: "The baseline period isn't just 'the most recent 12 months.' It's a judgment about which past best predicts the future. Choose wrong, and the math gives you confident nonsense.",
-    color: C.amber, dimColor: C.amberDim,
-    status: "ready",
-    tags: ["Fair & Relevant", "Coverage Factor", "Forward-Looking", "Apparent Increase"],
-  },
-];
+/* ───── Routing ───── */
+const ROUTES = {
+  "": "home", "#/fundamentals": "fundamentals", "#/workbench": "workbench",
+  "#/architecture": "architecture", "#/pedagogy": "pedagogy", "#/beyond": "beyond",
+  "#/simulation": "simulation", "#/cases": "cases", "#/boundary": "boundary",
+  "#/duration": "duration",
+  "#/cvrmse": "cvrmse",
+};
 
-/* ───── Landing Page ───── */
-function Home({ onNavigate }) {
-  const [hoveredDim, setHoveredDim] = useState(null);
-
-  return (
-    <div style={{ background: C.bg, minHeight: "100vh", fontFamily: "'IBM Plex Sans', sans-serif", color: C.text }}>
-      <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-
-      {/* ── Hero ── */}
-      <div style={{ borderBottom: `1px solid ${C.border}`, padding: "80px 32px 72px", background: `linear-gradient(180deg, ${C.surface} 0%, ${C.bg} 100%)` }}>
-        <div style={{ maxWidth: 720, margin: "0 auto", textAlign: "center" }}>
-          <div style={{ fontSize: 11, letterSpacing: 5, color: C.teal, fontWeight: 600, textTransform: "uppercase", marginBottom: 20 }}>
-            Counterfactual Design
-          </div>
-          <h1 style={{ fontSize: 40, fontWeight: 700, color: C.white, margin: "0 0 20px", letterSpacing: -0.5, lineHeight: 1.15 }}>
-            Three Decisions That<br />Define Every M&V Plan
-          </h1>
-          <p style={{ fontSize: 17, color: C.textSoft, lineHeight: 1.75, maxWidth: 560, margin: "0 auto 32px" }}>
-            Before you fit a model, you make three design choices — boundary, model form, and duration. Everything else follows. This course teaches you to make those choices with judgment.
-          </p>
-          <div style={{ fontSize: 12, color: C.textDim, fontStyle: "italic" }}>
-            Based on <span style={{ color: C.text }}>The Role of the Measurement and Verification Professional</span>
-            <br />Steve Kromer · River Publishers, 2024
-          </div>
-        </div>
-      </div>
-
-      {/* ── The Framework ── */}
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "56px 32px 32px" }}>
-        <div style={{ textAlign: "center", marginBottom: 48 }}>
-          <div style={{ fontSize: 11, letterSpacing: 4, color: C.teal, fontWeight: 600, textTransform: "uppercase", marginBottom: 12 }}>
-            The Framework
-          </div>
-          <h2 style={{ fontSize: 26, color: C.white, fontWeight: 600, margin: "0 0 12px" }}>
-            Counterfactual Design = Boundary × Model × Duration
-          </h2>
-          <p style={{ fontSize: 15, color: C.textSoft, maxWidth: 600, margin: "0 auto", lineHeight: 1.6 }}>
-            The proper study of mankind is the science of design. — Herbert Simon
-          </p>
-        </div>
-
-        {/* Three dimension cards */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-          {DIMENSIONS.map((d) => (
-            <div
-              key={d.id}
-              onMouseEnter={() => setHoveredDim(d.id)}
-              onMouseLeave={() => setHoveredDim(null)}
-              onClick={() => onNavigate(d.id)}
-              style={{
-                background: hoveredDim === d.id ? d.dimColor : C.card,
-                border: `1px solid ${hoveredDim === d.id ? d.color : C.border}`,
-                borderRadius: 10, padding: "28px 32px", cursor: "pointer",
-                transition: "all 0.2s ease",
-                display: "grid", gridTemplateColumns: "64px 1fr auto", alignItems: "start", gap: 20,
-              }}
-            >
-              <div>
-                <div style={{ fontFamily: "'IBM Plex Mono'", fontSize: 11, color: d.color, fontWeight: 600, letterSpacing: 2, marginBottom: 4 }}>
-                  {d.num}
-                </div>
-                <div style={{ fontSize: 22, fontWeight: 700, color: C.white }}>
-                  {d.label}
-                </div>
-              </div>
-              <div>
-                <div style={{ fontSize: 16, color: C.white, fontWeight: 500, marginBottom: 6 }}>
-                  {d.question}
-                </div>
-                <div style={{ fontSize: 14, color: C.textSoft, lineHeight: 1.6, marginBottom: 12 }}>
-                  {d.description}
-                </div>
-                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                  {d.tags.map((t) => (
-                    <span key={t} style={{ fontSize: 11, color: d.color, background: d.dimColor, padding: "3px 10px", borderRadius: 20, fontWeight: 500 }}>
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div style={{ fontSize: 20, color: hoveredDim === d.id ? d.color : C.textDim, transition: "color 0.2s" }}>
-                →
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ── The Big Idea ── */}
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "32px 32px 48px" }}>
-        <div style={{ background: `linear-gradient(135deg, #2c2418 0%, #3d3529 100%)`, borderRadius: 10, padding: "40px 36px", border: `1px solid ${C.border}` }}>
-          <div style={{ fontSize: 11, letterSpacing: 4, color: "#d4a76a", fontWeight: 600, textTransform: "uppercase", marginBottom: 16 }}>
-            Why This Matters
-          </div>
-          <p style={{ fontSize: 16, color: "#f5f0e8", lineHeight: 1.75, margin: "0 0 16px" }}>
-            <strong>M&V is not protocol compliance — it's design under uncertainty.</strong> The protocols give you a menu. They don't tell you how to choose from it, or what to do when nothing on the menu fits. That requires judgment — informed by statistics, physics, and an honest reckoning with what you don't know.
-          </p>
-          <p style={{ fontSize: 15, color: "#c4b8a8", lineHeight: 1.7, margin: "0 0 16px" }}>
-            The same metered data, the same regression engine, can tell you savings are 10% or that the retrofit <em>increased</em> consumption by 23% — depending on which twelve months you chose for the baseline. The math doesn't protect you from asking the wrong question. Design thinking does.
-          </p>
-          <p style={{ fontSize: 14, color: "#998d7e", fontStyle: "italic", margin: 0 }}>
-            "The fundamental role of the M&V professional is to facilitate agreement among all stakeholders that the reported quantity fairly and accurately represents the impact of the relevant energy management activities."
-          </p>
-        </div>
-      </div>
-
-      {/* ── What's Inside ── */}
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "16px 32px 48px" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-          {[
-            { label: "Interactive Tools", desc: "Build regression models, explore scatter plots, toggle baselines, watch the counterfactual change.", color: C.teal },
-            { label: "Case Studies", desc: "Non-routine adjustments, apparent increases, the 2022 vs 2023 baseline trap — real scenarios, real consequences.", color: C.rose },
-            { label: "Epistemology", desc: "Known unknowns, false certainties, and the architecture of uncertainty that underlies every savings estimate.", color: C.violet },
-            { label: "Professional Judgment", desc: "When to deviate from protocol, how to defend your choices, and why the technician's path leads to wrong answers.", color: C.amber },
-          ].map((item) => (
-            <div key={item.label} style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 8, padding: "24px 24px" }}>
-              <div style={{ fontSize: 14, fontWeight: 600, color: item.color, marginBottom: 8 }}>{item.label}</div>
-              <div style={{ fontSize: 13, color: C.textSoft, lineHeight: 1.6 }}>{item.desc}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ── Audience ── */}
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "16px 32px 48px" }}>
-        <div style={{ background: C.surface, borderRadius: 10, padding: "32px 36px", border: `1px solid ${C.border}` }}>
-          <div style={{ fontSize: 11, letterSpacing: 4, color: C.teal, fontWeight: 600, textTransform: "uppercase", marginBottom: 12 }}>
-            Who This Is For
-          </div>
-          <p style={{ fontSize: 15, color: C.text, lineHeight: 1.7, margin: 0 }}>
-            M&V professionals who want to move beyond protocol checklists. You know what IPMVP says — you want to understand <em>why</em> it says it, where it falls short, and how to exercise professional judgment when the protocols don't cover your situation. If you've ever had to defend a baseline choice that wasn't "most recent 12 months," this course is for you.
-          </p>
-        </div>
-      </div>
-
-      {/* ── Resources ── */}
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 32px 48px" }}>
-        <a href="https://counterfactual-designs.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", display: "block" }}>
-          <div style={{
-            background: "linear-gradient(135deg, #2c2418 0%, #3d3529 100%)",
-            border: `1px solid ${C.border}`, borderRadius: 10, padding: "28px 32px",
-            display: "flex", alignItems: "center", justifyContent: "space-between",
-            cursor: "pointer", transition: "all 0.2s",
-          }}
-            onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.teal; }}
-            onMouseLeave={(e) => { e.currentTarget.style.borderColor = C.border; }}
-          >
-            <div>
-              <div style={{ fontSize: 11, letterSpacing: 3, color: "#d4a76a", fontWeight: 600, textTransform: "uppercase", marginBottom: 8 }}>
-                From the Author
-              </div>
-              <div style={{ fontSize: 18, fontWeight: 700, color: "#f5f0e8", marginBottom: 6 }}>
-                counterfactual-designs.com
-              </div>
-              <div style={{ fontSize: 13, color: "#c4b8a8", lineHeight: 1.6 }}>
-                Steve Kromer's practice — consulting, training, and publications on counterfactual design for M&V professionals.
-              </div>
-            </div>
-            <div style={{ fontSize: 24, color: "#d4a76a", marginLeft: 24, flexShrink: 0 }}>→</div>
-          </div>
-        </a>
-      </div>
-
-      {/* ── Companion Courses ── */}
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 32px 48px" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-          <a href="https://mv-course.vercel.app" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
-            <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 8, padding: "20px 24px", cursor: "pointer", transition: "border-color 0.2s", height: "100%" }}
-              onMouseEnter={e => e.currentTarget.style.borderColor = C.amber}
-              onMouseLeave={e => e.currentTarget.style.borderColor = C.border}>
-              <div style={{ fontSize: 10, color: C.amber, fontWeight: 600, letterSpacing: 2, fontFamily: "'IBM Plex Mono', monospace", marginBottom: 4 }}>Companion</div>
-              <div style={{ fontSize: 15, fontWeight: 600, color: C.white }}>IPMVP Implementation Course</div>
-              <div style={{ fontSize: 12, color: C.textSoft, marginTop: 4 }}>Protocol-aligned statistical modeling with the frequentist workbench</div>
-            </div>
-          </a>
-          <a href="https://bayesian-mv.vercel.app" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
-            <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 8, padding: "20px 24px", cursor: "pointer", transition: "border-color 0.2s", height: "100%" }}
-              onMouseEnter={e => e.currentTarget.style.borderColor = C.blue}
-              onMouseLeave={e => e.currentTarget.style.borderColor = C.border}>
-              <div style={{ fontSize: 10, color: C.blue, fontWeight: 600, letterSpacing: 2, fontFamily: "'IBM Plex Mono', monospace", marginBottom: 4 }}>Companion</div>
-              <div style={{ fontSize: 15, fontWeight: 600, color: C.white }}>Bayesian M&V Module</div>
-              <div style={{ fontSize: 12, color: C.textSoft, marginTop: 4 }}>Same data, same models, different inference — posterior distributions instead of point estimates</div>
-            </div>
-          </a>
-        </div>
-      </div>
-
-      {/* ── Footer ── */}
-      <div style={{ borderTop: `1px solid ${C.border}`, padding: "32px", textAlign: "center" }}>
-        <div style={{ fontSize: 11, color: C.textDim, marginTop: 8 }}>
-          © 2024 Steve Kromer · SKEE · Based on <em>The Role of the M&V Professional</em> (River Publishers)
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ───── Placeholder pages ───── */
-function PlaceholderPage({ dimension, onBack }) {
-  const d = DIMENSIONS.find((x) => x.id === dimension);
-  return (
-    <div style={{ background: C.bg, minHeight: "100vh", fontFamily: "'IBM Plex Sans', sans-serif", color: C.text }}>
-      <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-      <div style={{ padding: "32px", maxWidth: 800, margin: "0 auto" }}>
-        <button onClick={onBack} style={{ background: "none", border: "none", color: C.teal, cursor: "pointer", fontSize: 14, marginBottom: 32, padding: 0 }}>
-          ← Back to Framework
-        </button>
-        <div style={{ fontSize: 11, letterSpacing: 4, color: d.color, fontWeight: 600, textTransform: "uppercase", marginBottom: 12 }}>
-          Dimension {d.num} · {d.label}
-        </div>
-        <h1 style={{ fontSize: 32, color: C.white, margin: "0 0 16px" }}>{d.question}</h1>
-        <p style={{ fontSize: 16, color: C.textSoft, lineHeight: 1.7 }}>{d.description}</p>
-        <div style={{ marginTop: 48, padding: "32px", background: C.card, borderRadius: 10, border: `1px solid ${d.color}30`, textAlign: "center" }}>
-          <div style={{ fontSize: 14, color: d.color, fontWeight: 600, marginBottom: 8 }}>Under Construction</div>
-          <div style={{ fontSize: 13, color: C.textSoft }}>This dimension is being built out with interactive tools and case studies.</div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ───── Router ───── */
+/* ───── App Shell ───── */
 export default function App() {
-  const getPage = () => window.location.hash.replace("#/", "") || "home";
+  const getPage = () => ROUTES[window.location.hash] || "home";
   const [page, setPage] = useState(getPage());
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handler = () => setPage(getPage());
     window.addEventListener("hashchange", handler);
     return () => window.removeEventListener("hashchange", handler);
   }, []);
 
   const navigate = (p) => {
-    window.location.hash = `#/${p}`;
+    const hash = Object.entries(ROUTES).find(([, v]) => v === p)?.[0] || "";
+    window.location.hash = hash;
     setPage(p);
     window.scrollTo(0, 0);
   };
 
   const goHome = () => navigate("home");
 
-  if (page === "home" || page === "") return <Home onNavigate={navigate} />;
-  if (["boundary", "model", "duration"].includes(page)) {
-    return <PlaceholderPage dimension={page} onBack={goHome} />;
-  }
-  return <Home onNavigate={navigate} />;
+  if (page === "fundamentals") return <ToolWrapper onHome={goHome} onSwitch={() => navigate("workbench")} switchLabel="Workbench →" current="fundamentals"><StatsFundamentals /></ToolWrapper>;
+  if (page === "workbench") return <ToolWrapper onHome={goHome} onSwitch={() => navigate("fundamentals")} switchLabel="← Fundamentals" current="workbench"><MVWorkbench /></ToolWrapper>;
+  if (page === "architecture") return <ArchitectureOfUncertainty onBack={goHome} />;
+  if (page === "pedagogy") return <UncertaintyPedagogy onBack={goHome} />;
+  if (page === "beyond") return <BeyondOneVariable onBack={goHome} />;
+  if (page === "simulation") return <SimulationExplainer onBack={goHome} />;
+  if (page === "cases") return <CaseStudies onBack={goHome} />;
+  if (page === "boundary") return <BoundaryExplainer onBack={goHome} />;
+  if (page === "duration") return <DurationExplainer onBack={goHome} />;
+  if (page === "cvrmse") return <CVrmseModule onBack={goHome} />;
+
+  return <Landing onNavigate={navigate} />;
+}
+
+/* ───── ToolWrapper (nav bar for Fundamentals / Workbench) ───── */
+function ToolWrapper({ children, onHome, onSwitch, switchLabel, current }) {
+  return (
+    <div style={{ background: C.bg, minHeight: "100vh" }}>
+      <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 24px", borderBottom: `1px solid ${C.border}`, background: C.surface, fontFamily: "'IBM Plex Sans', sans-serif" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <button onClick={onHome} style={{ background: "none", border: "none", cursor: "pointer", color: C.teal, fontSize: 13, fontWeight: 600, fontFamily: "'IBM Plex Sans'", padding: 0 }}>← CF Designs</button>
+          <span style={{ color: C.border }}>|</span>
+          <span style={{ fontSize: 12, color: C.textDim }}>
+            {current === "fundamentals" ? "Part 1: Statistical Foundations" : "Part 2: Counterfactual Workbench"}
+          </span>
+        </div>
+        <button onClick={onSwitch} style={{ background: "none", border: `1px solid ${C.border}`, borderRadius: 6, cursor: "pointer", color: C.textSoft, fontSize: 12, padding: "5px 14px", fontFamily: "'IBM Plex Sans'" }}>
+          {switchLabel}
+        </button>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+/* ───── Landing Page ───── */
+function Landing({ onNavigate }) {
+  return (
+    <div style={{ background: C.bg, minHeight: "100vh", fontFamily: "'IBM Plex Sans', sans-serif", color: C.text }}>
+      <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+      {/* Hero */}
+      <div style={{ borderBottom: `1px solid ${C.border}`, padding: "72px 32px 64px", background: `linear-gradient(180deg, ${C.surface} 0%, ${C.bg} 100%)` }}>
+        <div style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
+          <div style={{ fontSize: 11, letterSpacing: 5, color: C.teal, fontWeight: 600, textTransform: "uppercase", marginBottom: 20, fontFamily: "'IBM Plex Mono', monospace" }}>
+            Counterfactual Designs
+          </div>
+          <h1 style={{ fontSize: 36, fontWeight: 700, color: C.white, margin: "0 0 20px", letterSpacing: -0.5, lineHeight: 1.2 }}>
+            Statistical Modeling for<br />Measurement & Verification
+          </h1>
+          <p style={{ fontSize: 16, color: C.textSoft, lineHeight: 1.75, maxWidth: 560, margin: "0 auto 16px" }}>
+            You know <strong style={{ color: C.white }}>what</strong> a counterfactual is supposed to do — but could you build one, validate it, and defend it in a project review? This course gets you there.
+          </p>
+          <p style={{ fontSize: 13, color: C.textDim, fontStyle: "italic" }}>
+            Based on <em>The Role of the M&V Professional</em> by Steve Kromer (River Publishers, 2024)
+          </p>
+        </div>
+      </div>
+
+      {/* Who is this for */}
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "48px 32px 16px" }}>
+        <div style={{ background: C.surface, borderRadius: 10, padding: "24px 32px", border: `1px solid ${C.border}` }}>
+          <p style={{ fontSize: 15, color: C.text, lineHeight: 1.7, margin: 0 }}>
+            <strong>Who is this for?</strong> M&V professionals who want to move beyond protocol checklists. You want to understand <em>why</em> models work, where they break, and how to exercise professional judgment when the standard procedures don't cover your situation.
+          </p>
+        </div>
+      </div>
+
+      {/* Part 1 + Part 2 */}
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "32px 32px 16px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "28px 28px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: C.teal, fontFamily: "'IBM Plex Mono', monospace", letterSpacing: 2 }}>PART 1</span>
+              <span style={{ fontSize: 10, background: C.tealDim, color: C.teal, padding: "2px 8px", borderRadius: 10, fontWeight: 600 }}>START HERE</span>
+              <span style={{ fontSize: 11, color: C.textDim, marginLeft: "auto" }}>5 interactive modules</span>
+            </div>
+            <h2 style={{ fontSize: 22, fontWeight: 700, color: C.white, margin: "0 0 8px" }}>Statistical Foundations</h2>
+            <p style={{ fontSize: 14, color: C.textSoft, lineHeight: 1.65, margin: "0 0 20px" }}>
+              Build intuition from the ground up. Scatter plots, linear regression, residuals, and goodness-of-fit metrics — all interactive, all visual.
+            </p>
+            <button onClick={() => onNavigate("fundamentals")} style={{
+              background: C.teal, color: "#fff", border: "none", borderRadius: 8,
+              padding: "12px 24px", fontSize: 14, fontWeight: 600, cursor: "pointer",
+              fontFamily: "'IBM Plex Sans'", width: "100%",
+            }}>Begin with Foundations →</button>
+          </div>
+
+          <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "28px 28px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: C.blue, fontFamily: "'IBM Plex Mono', monospace", letterSpacing: 2 }}>PART 2</span>
+              <span style={{ fontSize: 10, background: C.blueDim, color: C.blue, padding: "2px 8px", borderRadius: 10, fontWeight: 600 }}>APPLIED</span>
+              <span style={{ fontSize: 11, color: C.textDim, marginLeft: "auto" }}>5 guided steps</span>
+            </div>
+            <h2 style={{ fontSize: 22, fontWeight: 700, color: C.white, margin: "0 0 8px" }}>Counterfactual Workbench</h2>
+            <p style={{ fontSize: 14, color: C.textSoft, lineHeight: 1.65, margin: "0 0 20px" }}>
+              Apply what you learned. Choose a building, fit change-point models, validate the counterfactual, and calculate savings with uncertainty.
+            </p>
+            <button onClick={() => onNavigate("workbench")} style={{
+              background: C.blue, color: "#fff", border: "none", borderRadius: 8,
+              padding: "12px 24px", fontSize: 14, fontWeight: 600, cursor: "pointer",
+              fontFamily: "'IBM Plex Sans'", width: "100%",
+            }}>Open the Workbench →</button>
+          </div>
+        </div>
+      </div>
+
+      {/* Go Deeper */}
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "32px 32px 16px" }}>
+        <div style={{ fontSize: 11, letterSpacing: 4, color: C.teal, fontWeight: 600, textTransform: "uppercase", marginBottom: 16, fontFamily: "'IBM Plex Mono', monospace" }}>
+          Go Deeper
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+          {[
+            { id: "boundary", label: "Measurement Boundary", desc: "Where you draw the line determines what the model sees — and what it hides.", color: C.rose, tags: ["Whole Facility", "Retrofit Isolation"] },
+            { id: "duration", label: "Duration", desc: "Which past predicts the future? How baseline period selection changes everything.", color: C.amber, tags: ["Baseline Selection", "Occupancy Trap"] },
+            { id: "cases", label: "Non-Routine Adjustments", desc: "Two case studies: a server room appears mid-reporting, a chiller fails during baseline.", color: C.teal, tags: ["Reporting Period NRA", "Baseline NRA"] },
+            { id: "beyond", label: "Beyond One Variable", desc: "Step through adding causal variables — from R²=0.02 to R²=0.99 with real hourly data.", color: C.blue, tags: ["TOWT", "Multi-Variable"] },
+            { id: "architecture", label: "Architecture of Uncertainty", desc: "What we know, what we don't, and what ain't so. Epistemic vs. aleatory vs. ontological.", color: C.violet, tags: ["Epistemology", "False Certainties"] },
+            { id: "simulation", label: "Simulation as Physical Model", desc: "When statistical models reach their limits, physics-based simulation picks up the thread.", color: C.teal, tags: ["EnergyPlus", "Bayesian Calibration"] },
+            { id: "cvrmse", label: "CV(RMSE) Deep Dive", desc: "Why a model can pass every metric and still hide savings in the noise. The baseload trap, detectability, and when good isn't good enough.", color: C.green, tags: ["Baseload Trap", "Detectability"] },
+          ].map(item => (
+            <div key={item.id} onClick={() => onNavigate(item.id)} style={{
+              background: C.card, border: `1px solid ${C.border}`, borderRadius: 8,
+              padding: "20px 20px", cursor: "pointer", transition: "border-color 0.2s",
+              borderTop: `3px solid ${item.color}`,
+            }}
+              onMouseEnter={e => e.currentTarget.style.borderColor = item.color}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.borderTopColor = item.color; }}>
+              <div style={{ fontSize: 15, fontWeight: 700, color: C.white, marginBottom: 8 }}>{item.label}</div>
+              <div style={{ fontSize: 13, color: C.textSoft, lineHeight: 1.55, marginBottom: 10 }}>{item.desc}</div>
+              <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
+                {item.tags.map(t => (
+                  <span key={t} style={{ fontSize: 10, color: item.color, background: `${item.color}10`, padding: "2px 8px", borderRadius: 10, fontWeight: 500 }}>{t}</span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* The Framework (Capstone) */}
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "32px 32px 16px" }}>
+        <div style={{ background: `linear-gradient(135deg, #2c2418 0%, #3d3529 100%)`, borderRadius: 10, padding: "36px 36px", border: `1px solid ${C.border}` }}>
+          <div style={{ fontSize: 11, letterSpacing: 4, color: "#d4a76a", fontWeight: 600, textTransform: "uppercase", marginBottom: 12, fontFamily: "'IBM Plex Mono', monospace" }}>
+            The Framework
+          </div>
+          <h2 style={{ fontSize: 22, fontWeight: 700, color: "#f5f0e8", margin: "0 0 8px" }}>
+            Counterfactual Design — Three Dimensions
+          </h2>
+          <p style={{ fontSize: 14, color: "#c4b8a8", lineHeight: 1.7, margin: "0 0 16px" }}>
+            Every M&V analysis requires three design decisions. These dimensions — not protocol labels — are how professionals think about constructing a counterfactual.
+          </p>
+          <p style={{ fontSize: 14, color: "#c4b8a8", lineHeight: 1.7, margin: "0 0 20px" }}>
+            <strong style={{ color: "#f5f0e8" }}>M&V is not protocol compliance — it's design under uncertainty.</strong> The protocols give you a menu. They don't tell you how to choose from it, or what to do when nothing on the menu fits. That requires judgment — informed by statistics, physics, and an honest reckoning with what you don't know.
+          </p>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+            {[
+              { num: "1", label: "Boundary", q: "What does the meter capture?", color: C.rose },
+              { num: "2", label: "Model Form", q: "How do you model baseline behavior?", color: "#6b9fd4" },
+              { num: "3", label: "Duration", q: "Which past predicts the future?", color: "#d4a76a" },
+            ].map(d => (
+              <div key={d.label} style={{ background: "rgba(245,240,232,0.06)", borderRadius: 8, padding: "16px 16px", border: "1px solid rgba(245,240,232,0.1)" }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#f5f0e8", marginBottom: 4 }}>{d.num}. {d.label}</div>
+                <div style={{ fontSize: 12, color: "#998d7e" }}>{d.q}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Companion links */}
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "32px 32px 16px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+          <a href="https://bayesian-mv.vercel.app" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
+            <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 8, padding: "20px 24px", cursor: "pointer", transition: "border-color 0.2s", height: "100%" }}
+              onMouseEnter={e => e.currentTarget.style.borderColor = C.violet}
+              onMouseLeave={e => e.currentTarget.style.borderColor = C.border}>
+              <div style={{ fontSize: 10, color: C.violet, fontWeight: 600, letterSpacing: 2, fontFamily: "'IBM Plex Mono', monospace", marginBottom: 4 }}>Part 3 · Companion</div>
+              <div style={{ fontSize: 15, fontWeight: 600, color: C.white }}>Bayesian M&V Module</div>
+              <div style={{ fontSize: 12, color: C.textSoft, marginTop: 4 }}>Same data, same models, different inference — posterior distributions instead of point estimates</div>
+            </div>
+          </a>
+          <a href="https://mv-course.vercel.app" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
+            <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 8, padding: "20px 24px", cursor: "pointer", transition: "border-color 0.2s", height: "100%" }}
+              onMouseEnter={e => e.currentTarget.style.borderColor = C.amber}
+              onMouseLeave={e => e.currentTarget.style.borderColor = C.border}>
+              <div style={{ fontSize: 10, color: C.amber, fontWeight: 600, letterSpacing: 2, fontFamily: "'IBM Plex Mono', monospace", marginBottom: 4 }}>Reference</div>
+              <div style={{ fontSize: 15, fontWeight: 600, color: C.white }}>IPMVP Translation Guide</div>
+              <div style={{ fontSize: 12, color: C.textSoft, marginTop: 4 }}>How Options A–D map to Boundary × Model Form × Duration</div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      {/* Author */}
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "16px 32px 48px" }}>
+        <a href="https://counterfactual-designs.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", display: "block" }}>
+          <div style={{ background: "linear-gradient(135deg, #2c2418 0%, #3d3529 100%)", border: `1px solid ${C.border}`, borderRadius: 10, padding: "24px 28px", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", transition: "all 0.2s" }}
+            onMouseEnter={e => e.currentTarget.style.borderColor = C.teal}
+            onMouseLeave={e => e.currentTarget.style.borderColor = C.border}>
+            <div>
+              <div style={{ fontSize: 11, letterSpacing: 3, color: "#d4a76a", fontWeight: 600, textTransform: "uppercase", marginBottom: 6 }}>From the Author</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: "#f5f0e8", marginBottom: 4 }}>counterfactual-designs.com</div>
+              <div style={{ fontSize: 12, color: "#c4b8a8", lineHeight: 1.5 }}>Steve Kromer's practice — consulting, training, and publications.</div>
+            </div>
+            <div style={{ fontSize: 24, color: "#d4a76a", marginLeft: 24, flexShrink: 0 }}>→</div>
+          </div>
+        </a>
+      </div>
+
+      {/* Footer */}
+      <div style={{ borderTop: `1px solid ${C.border}`, padding: "32px", textAlign: "center" }}>
+        <div style={{ fontSize: 11, color: C.textDim }}>
+          © 2025 Steve Kromer · SKEE · Based on <em>The Role of the M&V Professional</em> (River Publishers, 2024)
+        </div>
+      </div>
+    </div>
+  );
 }
