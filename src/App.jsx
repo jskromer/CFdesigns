@@ -203,11 +203,32 @@ function Home({ onNavigate }) {
         </a>
       </div>
 
+      {/* ── Companion Courses ── */}
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 32px 48px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+          <a href="https://mv-course.vercel.app" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
+            <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 8, padding: "20px 24px", cursor: "pointer", transition: "border-color 0.2s", height: "100%" }}
+              onMouseEnter={e => e.currentTarget.style.borderColor = C.amber}
+              onMouseLeave={e => e.currentTarget.style.borderColor = C.border}>
+              <div style={{ fontSize: 10, color: C.amber, fontWeight: 600, letterSpacing: 2, fontFamily: "'IBM Plex Mono', monospace", marginBottom: 4 }}>Companion</div>
+              <div style={{ fontSize: 15, fontWeight: 600, color: C.white }}>IPMVP Implementation Course</div>
+              <div style={{ fontSize: 12, color: C.textSoft, marginTop: 4 }}>Protocol-aligned statistical modeling with the frequentist workbench</div>
+            </div>
+          </a>
+          <a href="https://bayesian-mv.vercel.app" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
+            <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 8, padding: "20px 24px", cursor: "pointer", transition: "border-color 0.2s", height: "100%" }}
+              onMouseEnter={e => e.currentTarget.style.borderColor = C.blue}
+              onMouseLeave={e => e.currentTarget.style.borderColor = C.border}>
+              <div style={{ fontSize: 10, color: C.blue, fontWeight: 600, letterSpacing: 2, fontFamily: "'IBM Plex Mono', monospace", marginBottom: 4 }}>Companion</div>
+              <div style={{ fontSize: 15, fontWeight: 600, color: C.white }}>Bayesian M&V Module</div>
+              <div style={{ fontSize: 12, color: C.textSoft, marginTop: 4 }}>Same data, same models, different inference — posterior distributions instead of point estimates</div>
+            </div>
+          </a>
+        </div>
+      </div>
+
       {/* ── Footer ── */}
       <div style={{ borderTop: `1px solid ${C.border}`, padding: "32px", textAlign: "center" }}>
-        <div style={{ fontSize: 12, color: C.textDim }}>
-          Companion: <a href="https://mv-course.vercel.app" style={{ color: C.teal, textDecoration: "none" }}>IPMVP Implementation Course →</a>
-        </div>
         <div style={{ fontSize: 11, color: C.textDim, marginTop: 8 }}>
           © 2024 Steve Kromer · SKEE · Based on <em>The Role of the M&V Professional</em> (River Publishers)
         </div>
