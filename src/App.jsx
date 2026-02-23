@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useUser, SignIn, SignInButton, UserButton } from "@clerk/clerk-react";
 import StatsFundamentals from "./Fundamentals.jsx";
 import MVWorkbench from "./Workbench.jsx";
 import ArchitectureOfUncertainty from "./ArchitectureOfUncertainty.jsx";
@@ -32,6 +33,51 @@ const ROUTES = {
   "#/cvrmse": "cvrmse",
 };
 
+/* ───── Auth helpers ───── */
+function useAuth() {
+  try {
+    const { isLoaded, isSignedIn, user } = useUser();
+    return { isLoaded, isSignedIn, user, enabled: true };
+  } catch {
+    // Clerk not configured (no key) — allow everything
+    return { isLoaded: true, isSignedIn: true, user: null, enabled: false };
+  }
+}
+
+function AuthGate({ children, onHome }) {
+  const { isLoaded, isSignedIn, enabled } = useAuth();
+
+  if (!enabled) return children; // No Clerk = dev mode, no gate
+  if (!isLoaded) return (
+    <div style={{ background: C.bg, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ fontSize: 14, color: C.textDim, fontFamily: "'IBM Plex Sans', sans-serif" }}>Loading…</div>
+    </div>
+  );
+  if (!isSignedIn) return (
+    <div style={{ background: C.bg, minHeight: "100vh", fontFamily: "'IBM Plex Sans', sans-serif", color: C.text }}>
+      <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+      <div style={{ display: "flex", alignItems: "center", padding: "10px 24px", borderBottom: `1px solid ${C.border}`, background: C.surface }}>
+        <button onClick={onHome} style={{ background: "none", border: "none", cursor: "pointer", color: C.teal, fontSize: 13, fontWeight: 600, fontFamily: "'IBM Plex Sans'", padding: 0 }}>← CF Designs</button>
+      </div>
+      <div style={{ maxWidth: 440, margin: "80px auto 0", textAlign: "center" }}>
+        <div style={{ fontSize: 11, letterSpacing: 5, color: C.teal, fontWeight: 600, textTransform: "uppercase", marginBottom: 16, fontFamily: "'IBM Plex Mono', monospace" }}>
+          Course Access
+        </div>
+        <h2 style={{ fontSize: 24, fontWeight: 700, color: C.white, margin: "0 0 12px" }}>
+          Sign in to continue
+        </h2>
+        <p style={{ fontSize: 14, color: C.textSoft, lineHeight: 1.65, marginBottom: 32 }}>
+          Create a free account or sign in to access the course modules.
+        </p>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <SignIn routing="hash" />
+        </div>
+      </div>
+    </div>
+  );
+  return children;
+}
+
 /* ───── App Shell ───── */
 export default function App() {
   const getPage = () => ROUTES[window.location.hash] || "home";
@@ -52,22 +98,25 @@ export default function App() {
 
   const goHome = () => navigate("home");
 
-  if (page === "fundamentals") return <ToolWrapper onHome={goHome} onSwitch={() => navigate("workbench")} switchLabel="Workbench →" current="fundamentals"><StatsFundamentals /></ToolWrapper>;
-  if (page === "workbench") return <ToolWrapper onHome={goHome} onSwitch={() => navigate("fundamentals")} switchLabel="← Fundamentals" current="workbench"><MVWorkbench /></ToolWrapper>;
-  if (page === "architecture") return <ArchitectureOfUncertainty onBack={goHome} />;
-  if (page === "pedagogy") return <UncertaintyPedagogy onBack={goHome} />;
-  if (page === "beyond") return <BeyondOneVariable onBack={goHome} />;
-  if (page === "simulation") return <SimulationExplainer onBack={goHome} />;
-  if (page === "cases") return <CaseStudies onBack={goHome} />;
-  if (page === "boundary") return <BoundaryExplainer onBack={goHome} />;
-  if (page === "duration") return <DurationExplainer onBack={goHome} />;
-  if (page === "cvrmse") return <CVrmseModule onBack={goHome} />;
+  // Gated pages — require sign-in
+  if (page === "fundamentals") return <AuthGate onHome={goHome}><ToolWrapper onHome={goHome} onSwitch={() => navigate("workbench")} switchLabel="Workbench →" current="fundamentals"><StatsFundamentals /></ToolWrapper></AuthGate>;
+  if (page === "workbench") return <AuthGate onHome={goHome}><ToolWrapper onHome={goHome} onSwitch={() => navigate("fundamentals")} switchLabel="← Fundamentals" current="workbench"><MVWorkbench /></ToolWrapper></AuthGate>;
+  if (page === "architecture") return <AuthGate onHome={goHome}><ArchitectureOfUncertainty onBack={goHome} /></AuthGate>;
+  if (page === "pedagogy") return <AuthGate onHome={goHome}><UncertaintyPedagogy onBack={goHome} /></AuthGate>;
+  if (page === "beyond") return <AuthGate onHome={goHome}><BeyondOneVariable onBack={goHome} /></AuthGate>;
+  if (page === "simulation") return <AuthGate onHome={goHome}><SimulationExplainer onBack={goHome} /></AuthGate>;
+  if (page === "cases") return <AuthGate onHome={goHome}><CaseStudies onBack={goHome} /></AuthGate>;
+  if (page === "boundary") return <AuthGate onHome={goHome}><BoundaryExplainer onBack={goHome} /></AuthGate>;
+  if (page === "duration") return <AuthGate onHome={goHome}><DurationExplainer onBack={goHome} /></AuthGate>;
+  if (page === "cvrmse") return <AuthGate onHome={goHome}><CVrmseModule onBack={goHome} /></AuthGate>;
 
+  // Landing page — always public
   return <Landing onNavigate={navigate} />;
 }
 
 /* ───── ToolWrapper (nav bar for Fundamentals / Workbench) ───── */
 function ToolWrapper({ children, onHome, onSwitch, switchLabel, current }) {
+  const { enabled } = useAuth();
   return (
     <div style={{ background: C.bg, minHeight: "100vh" }}>
       <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -79,9 +128,12 @@ function ToolWrapper({ children, onHome, onSwitch, switchLabel, current }) {
             {current === "fundamentals" ? "Part 1: Statistical Foundations" : "Part 2: Counterfactual Workbench"}
           </span>
         </div>
-        <button onClick={onSwitch} style={{ background: "none", border: `1px solid ${C.border}`, borderRadius: 6, cursor: "pointer", color: C.textSoft, fontSize: 12, padding: "5px 14px", fontFamily: "'IBM Plex Sans'" }}>
-          {switchLabel}
-        </button>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <button onClick={onSwitch} style={{ background: "none", border: `1px solid ${C.border}`, borderRadius: 6, cursor: "pointer", color: C.textSoft, fontSize: 12, padding: "5px 14px", fontFamily: "'IBM Plex Sans'" }}>
+            {switchLabel}
+          </button>
+          {enabled && <UserButton afterSignOutUrl="/" />}
+        </div>
       </div>
       {children}
     </div>
@@ -90,9 +142,28 @@ function ToolWrapper({ children, onHome, onSwitch, switchLabel, current }) {
 
 /* ───── Landing Page ───── */
 function Landing({ onNavigate }) {
+  const { isSignedIn, user, enabled } = useAuth();
   return (
     <div style={{ background: C.bg, minHeight: "100vh", fontFamily: "'IBM Plex Sans', sans-serif", color: C.text }}>
       <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+      {/* Auth nav */}
+      {enabled && (
+        <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", padding: "10px 24px", borderBottom: `1px solid ${C.border}`, background: C.surface }}>
+          {isSignedIn ? (
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{ fontSize: 12, color: C.textDim }}>{user?.primaryEmailAddress?.emailAddress}</span>
+              <UserButton afterSignOutUrl="/" />
+            </div>
+          ) : (
+            <SignInButton mode="modal">
+              <button style={{ background: "none", border: `1px solid ${C.border}`, borderRadius: 6, cursor: "pointer", color: C.teal, fontSize: 12, fontWeight: 600, padding: "6px 16px", fontFamily: "'IBM Plex Sans'" }}>
+                Sign In
+              </button>
+            </SignInButton>
+          )}
+        </div>
+      )}
 
       {/* Hero */}
       <div style={{ borderBottom: `1px solid ${C.border}`, padding: "72px 32px 64px", background: `linear-gradient(180deg, ${C.surface} 0%, ${C.bg} 100%)` }}>
