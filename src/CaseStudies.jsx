@@ -419,14 +419,39 @@ export default function CaseStudies({ onBack }) {
       {/* Content */}
       <div ref={containerRef} style={{ maxWidth: 800, margin: "0 auto", padding: "28px 32px 80px" }}>
 
-        {/* NRA Infographic */}
+        {/* NRA Reference Card */}
         <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 8, marginBottom: 24, overflow: "hidden" }}>
           <div style={{ padding: "12px 20px", background: C.surfaceRaised, borderBottom: `1px solid ${C.border}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div style={{ fontFamily: "'IBM Plex Sans'", fontSize: 12, fontWeight: 700, color: C.text }}>📋 Reference: Mastering Non-Routine Adjustments</div>
-            <div style={{ fontFamily: "'IBM Plex Sans'", fontSize: 10, color: C.textDim }}>Source: CMVP Guide via NotebookLM</div>
+            <div style={{ fontFamily: "'IBM Plex Sans'", fontSize: 12, fontWeight: 700, color: C.text }}>📋 Reference: Non-Routine Adjustments</div>
+            <div style={{ fontFamily: "'IBM Plex Sans'", fontSize: 10, color: C.textDim }}>From the CMVP Body of Knowledge</div>
           </div>
-          <div style={{ padding: 12 }}>
-            <img src="/nra-infographic.png" alt="Mastering Non-Routine Adjustments — CMVP Guide to M&V Accuracy" style={{ width: "100%", borderRadius: 4, display: "block" }} />
+          <div style={{ padding: "20px 24px" }}>
+            <div style={{ fontFamily: "'IBM Plex Sans'", fontSize: 13, color: C.textSoft, lineHeight: 1.7, marginBottom: 16 }}>
+              A <strong style={{ color: C.text }}>non-routine adjustment (NRA)</strong> accounts for a change in the facility that is <em>independent</em> of both the retrofit and the routine variables (e.g., weather). NRAs restore the counterfactual's validity when the real world doesn't match baseline assumptions.
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <div style={{ background: `${C.orange}08`, border: `1px solid ${C.orange}25`, borderRadius: 6, padding: "14px 16px" }}>
+                <div style={{ fontFamily: "'IBM Plex Mono'", fontSize: 10, fontWeight: 700, color: C.orange, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>Reporting Period NRA</div>
+                <div style={{ fontFamily: "'IBM Plex Sans'", fontSize: 12, color: C.textSoft, lineHeight: 1.7 }}>
+                  A new load or condition appears <em>after</em> the baseline. The model prediction is correct, but actual energy diverges. <strong style={{ color: C.text }}>Detectable</strong> — the data shows it.
+                </div>
+                <div style={{ marginTop: 10, fontFamily: "'IBM Plex Mono'", fontSize: 11, color: C.orange, background: `${C.orange}10`, borderRadius: 4, padding: "6px 10px", textAlign: "center" }}>
+                  Savings = Counterfactual − (Actual − NRA)
+                </div>
+              </div>
+              <div style={{ background: `${C.red}06`, border: `1px solid ${C.red}20`, borderRadius: 6, padding: "14px 16px" }}>
+                <div style={{ fontFamily: "'IBM Plex Mono'", fontSize: 10, fontWeight: 700, color: C.red, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>Baseline NRA</div>
+                <div style={{ fontFamily: "'IBM Plex Sans'", fontSize: 12, color: C.textSoft, lineHeight: 1.7 }}>
+                  An anomaly contaminates the baseline data. The model absorbs it silently. <strong style={{ color: C.text }}>Invisible</strong> — the model looks fine but the counterfactual is wrong.
+                </div>
+                <div style={{ marginTop: 10, fontFamily: "'IBM Plex Mono'", fontSize: 11, color: C.red, background: `${C.red}08`, borderRadius: 4, padding: "6px 10px", textAlign: "center" }}>
+                  Fix: Exclude or adjust anomalous data
+                </div>
+              </div>
+            </div>
+            <div style={{ marginTop: 14, fontFamily: "'IBM Plex Sans'", fontSize: 12, color: C.textDim, fontStyle: "italic", textAlign: "center", lineHeight: 1.6 }}>
+              The two case studies below illustrate each type — and why the baseline variety is more dangerous.
+            </div>
           </div>
         </div>
 
