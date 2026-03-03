@@ -264,7 +264,7 @@ export default function SimulationExplainer({ onBack }) {
           <P>
             These open-source repositories demonstrate both halves of the physics-based approach: running EnergyPlus simulations programmatically through AI assistants, and calibrating simulation models against measured data using Bayesian methods.
           </P>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 16 }}>
             <RepoCard
               name="energyplus-mcp"
               url="https://github.com/jskromer/energyplus-mcp"
@@ -279,9 +279,16 @@ export default function SimulationExplainer({ onBack }) {
               tags={["Bayesian", "Stan", "Calibration", "Uncertainty"]}
               color={C.violet}
             />
+            <RepoCard
+              name="ane-surrogate"
+              url="https://github.com/jskromer/ane-surrogate"
+              description="ANE-accelerated surrogate calibration — a working demo of neural-net-based building energy calibration running on Apple Silicon at 30,000 predictions/sec via PyTorch → CoreML → Apple Neural Engine."
+              tags={["ANE", "CoreML", "Surrogate", "30k pred/s"]}
+              color={C.green}
+            />
           </div>
           <Callout color={C.indigo} label="The connection">
-            The EnergyPlus MCP server makes it possible to <em>run</em> the simulation programmatically. The Bayesian calibration framework makes it possible to <em>tune</em> the simulation against reality. Together they form a pipeline: specify priors → run simulations → compare to meters → update posteriors → generate calibrated counterfactuals with uncertainty bands.
+            The EnergyPlus MCP server makes it possible to <em>run</em> the simulation programmatically. The Bayesian calibration framework makes it possible to <em>tune</em> the simulation against reality. The ANE surrogate makes the inner loop <em>fast</em> — replacing seconds-per-simulation with microseconds-per-prediction on Apple Silicon. Together they form a pipeline: specify priors → run simulations → train surrogate → compare to meters → update posteriors → generate calibrated counterfactuals with uncertainty bands.
           </Callout>
         </Section>
 
