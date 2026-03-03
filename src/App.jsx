@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useUser, SignIn, SignInButton, UserButton } from "@clerk/clerk-react";
+import { Analytics } from "@vercel/analytics/react";
 import StatsFundamentals from "./Fundamentals.jsx";
 import MVWorkbench from "./Workbench.jsx";
 import ArchitectureOfUncertainty from "./ArchitectureOfUncertainty.jsx";
@@ -99,19 +100,19 @@ export default function App() {
   const goHome = () => navigate("home");
 
   // Gated pages — require sign-in
-  if (page === "fundamentals") return <AuthGate onHome={goHome}><ToolWrapper onHome={goHome} onSwitch={() => navigate("workbench")} switchLabel="Workbench →" current="fundamentals"><StatsFundamentals /></ToolWrapper></AuthGate>;
-  if (page === "workbench") return <AuthGate onHome={goHome}><ToolWrapper onHome={goHome} onSwitch={() => navigate("fundamentals")} switchLabel="← Fundamentals" current="workbench"><MVWorkbench /></ToolWrapper></AuthGate>;
-  if (page === "architecture") return <AuthGate onHome={goHome}><ArchitectureOfUncertainty onBack={goHome} /></AuthGate>;
-  if (page === "pedagogy") return <AuthGate onHome={goHome}><UncertaintyPedagogy onBack={goHome} /></AuthGate>;
-  if (page === "beyond") return <AuthGate onHome={goHome}><BeyondOneVariable onBack={goHome} /></AuthGate>;
-  if (page === "simulation") return <AuthGate onHome={goHome}><SimulationExplainer onBack={goHome} /></AuthGate>;
-  if (page === "cases") return <AuthGate onHome={goHome}><CaseStudies onBack={goHome} /></AuthGate>;
-  if (page === "boundary") return <AuthGate onHome={goHome}><BoundaryExplainer onBack={goHome} /></AuthGate>;
-  if (page === "duration") return <AuthGate onHome={goHome}><DurationExplainer onBack={goHome} /></AuthGate>;
-  if (page === "cvrmse") return <AuthGate onHome={goHome}><CVrmseModule onBack={goHome} /></AuthGate>;
+  if (page === "fundamentals") return <><AuthGate onHome={goHome}><ToolWrapper onHome={goHome} onSwitch={() => navigate("workbench")} switchLabel="Workbench →" current="fundamentals"><StatsFundamentals /></ToolWrapper></AuthGate><Analytics /></>;
+  if (page === "workbench") return <><AuthGate onHome={goHome}><ToolWrapper onHome={goHome} onSwitch={() => navigate("fundamentals")} switchLabel="← Fundamentals" current="workbench"><MVWorkbench /></ToolWrapper></AuthGate><Analytics /></>;
+  if (page === "architecture") return <><AuthGate onHome={goHome}><ArchitectureOfUncertainty onBack={goHome} /></AuthGate><Analytics /></>;
+  if (page === "pedagogy") return <><AuthGate onHome={goHome}><UncertaintyPedagogy onBack={goHome} /></AuthGate><Analytics /></>;
+  if (page === "beyond") return <><AuthGate onHome={goHome}><BeyondOneVariable onBack={goHome} /></AuthGate><Analytics /></>;
+  if (page === "simulation") return <><AuthGate onHome={goHome}><SimulationExplainer onBack={goHome} /></AuthGate><Analytics /></>;
+  if (page === "cases") return <><AuthGate onHome={goHome}><CaseStudies onBack={goHome} /></AuthGate><Analytics /></>;
+  if (page === "boundary") return <><AuthGate onHome={goHome}><BoundaryExplainer onBack={goHome} /></AuthGate><Analytics /></>;
+  if (page === "duration") return <><AuthGate onHome={goHome}><DurationExplainer onBack={goHome} /></AuthGate><Analytics /></>;
+  if (page === "cvrmse") return <><AuthGate onHome={goHome}><CVrmseModule onBack={goHome} /></AuthGate><Analytics /></>;
 
   // Landing page — always public
-  return <Landing onNavigate={navigate} />;
+  return <><Landing onNavigate={navigate} /><Analytics /></>;
 }
 
 /* ───── ToolWrapper (nav bar for Fundamentals / Workbench) ───── */
