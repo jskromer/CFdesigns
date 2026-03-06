@@ -10,6 +10,7 @@ import CaseStudies from "./CaseStudies.jsx";
 import BoundaryExplainer from "./BoundaryExplainer.jsx";
 import DurationExplainer from "./DurationExplainer.jsx";
 import CVrmseModule from "./CVrmseModule.jsx";
+import EcosystemMap from "./EcosystemMap.jsx";
 
 /* ───── Palette (warm cream) ───── */
 const C = {
@@ -31,6 +32,7 @@ const ROUTES = {
   "#/simulation": "simulation", "#/cases": "cases", "#/boundary": "boundary",
   "#/duration": "duration",
   "#/cvrmse": "cvrmse",
+  "#/ecosystem": "ecosystem",
 };
 
 /* ───── Auth helpers ───── */
@@ -109,6 +111,7 @@ export default function App() {
   if (page === "boundary") return <AuthGate onHome={goHome}><BoundaryExplainer onBack={goHome} /></AuthGate>;
   if (page === "duration") return <AuthGate onHome={goHome}><DurationExplainer onBack={goHome} /></AuthGate>;
   if (page === "cvrmse") return <AuthGate onHome={goHome}><CVrmseModule onBack={goHome} /></AuthGate>;
+  if (page === "ecosystem") return <EcosystemMap onBack={goHome} />;
 
   // Landing page — always public
   return <Landing onNavigate={navigate} />;
@@ -296,7 +299,12 @@ function Landing({ onNavigate }) {
       </div>
 
       {/* Companion links */}
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "32px 32px 16px" }}>
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "32px 32px 0", textAlign: "right" }}>
+        <a href="#/ecosystem" style={{ fontSize: 12, color: C.textDim, textDecoration: "none", fontFamily: "'IBM Plex Mono', monospace", letterSpacing: 1 }}>
+          View ecosystem map &rarr;
+        </a>
+      </div>
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "8px 32px 16px" }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
           <a href="https://bayesian-mv.vercel.app" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
             <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 8, padding: "20px 24px", cursor: "pointer", transition: "border-color 0.2s", height: "100%" }}
