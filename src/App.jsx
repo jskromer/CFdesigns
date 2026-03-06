@@ -334,6 +334,24 @@ function Landing({ onNavigate }) {
               <div style={{ fontSize: 12, color: C.textSoft, marginTop: 4 }}>Full M&V plan exercise with EnergyPlus simulation data — 62,000 sq ft government facility</div>
             </div>
           </a>
+          <a href="https://mnvscore.vercel.app" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
+            <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 8, padding: "20px 24px", cursor: "pointer", transition: "border-color 0.2s", height: "100%" }}
+              onMouseEnter={e => e.currentTarget.style.borderColor = C.blue}
+              onMouseLeave={e => e.currentTarget.style.borderColor = C.border}>
+              <div style={{ fontSize: 10, color: C.blue, fontWeight: 600, letterSpacing: 2, fontFamily: "'IBM Plex Mono', monospace", marginBottom: 4 }}>Scorecard</div>
+              <div style={{ fontSize: 15, fontWeight: 600, color: C.white }}>M&V Scorecard</div>
+              <div style={{ fontSize: 12, color: C.textSoft, marginTop: 4 }}>AI-powered scoring of M&V plans across eight dimensions — upload a PDF and get instant feedback</div>
+            </div>
+          </a>
+          <a href="https://github.com/jskromer/ane-surrogate" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
+            <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 8, padding: "20px 24px", cursor: "pointer", transition: "border-color 0.2s", height: "100%" }}
+              onMouseEnter={e => e.currentTarget.style.borderColor = C.teal}
+              onMouseLeave={e => e.currentTarget.style.borderColor = C.border}>
+              <div style={{ fontSize: 10, color: C.teal, fontWeight: 600, letterSpacing: 2, fontFamily: "'IBM Plex Mono', monospace", marginBottom: 4 }}>Research</div>
+              <div style={{ fontSize: 15, fontWeight: 600, color: C.white }}>ANE Surrogate</div>
+              <div style={{ fontSize: 12, color: C.textSoft, marginTop: 4 }}>Neural-network surrogates for EnergyPlus — accelerated calibration on Apple Silicon</div>
+            </div>
+          </a>
         </div>
       </div>
 
