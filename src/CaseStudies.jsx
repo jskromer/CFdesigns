@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from "react";
-import { CS1_BASELINE, CS1_REPORTING, CS2_BASELINE, CS2_REPORTING, HEAT_BP, COOL_BP } from "./caseStudyData.js";
+import { CS1_BASELINE, CS1_REPORTING, CS2_BASELINE, CS2_REPORTING_CONTAMINATED, CS2_REPORTING_CLEAN, HEAT_BP, COOL_BP } from "./caseStudyData.js";
 
 const C = {
   bg: "#f5f0e8", surface: "#ffffff", surfaceRaised: "#ebe5d9",
@@ -609,7 +609,13 @@ export default function CaseStudies({ onBack }) {
               The contaminated model overpredicts the counterfactual, inflating apparent savings. The clean model gives an honest answer.
             </P>
 
-            <SavingsTable data={CS2_REPORTING} applyNRA={false} label={cs2Exclude ? "Savings (clean 10-month baseline)" : "Savings (contaminated 12-month baseline)"} />
+            <SavingsTable data={cs2Exclude ? CS2_REPORTING_CLEAN : CS2_REPORTING_CONTAMINATED} applyNRA={false} label={cs2Exclude ? "Savings (clean 10-month baseline)" : "Savings (contaminated 12-month baseline)"} />
+
+            <Callout color={cs2Exclude ? C.green : C.red} label={cs2Exclude ? "Clean baseline" : "Contaminated baseline"}>
+              {cs2Exclude
+                ? "With the anomalous months removed, the clean baseline predicts ~11% savings — consistent with what a typical chiller upgrade delivers. The counterfactual is honest."
+                : "The contaminated baseline overpredicts the counterfactual, making savings appear ~16% — nearly 50% higher than the clean estimate. The model has no idea it's wrong. It just returns a confident, incorrect answer."}
+            </Callout>
 
             <Callout color={C.red} label="The lesson">
               A non-routine event in the baseline is more insidious than one in the reporting period. In the reporting period, the anomaly is visible — the data doesn't match the prediction. In the baseline, <strong>the anomaly gets baked into the model itself</strong>. The model looks fine. The R² looks acceptable. But the counterfactual is wrong, and every month of reported savings carries that error forward.
