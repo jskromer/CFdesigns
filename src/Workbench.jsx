@@ -360,7 +360,7 @@ function invertMatrix(matrix) {
   return aug.map((row) => row.slice(n));
 }
 
-function fitModel(modelType, data) {
+function fitModel(modelType, data, fixedCPs = null) {
   const temps = data.map((d) => d.temp), energy = data.map((d) => d.energy);
   if (modelType === "2P") {
     const X = temps.map((t) => [1, t]);
@@ -389,6 +389,14 @@ function fitModel(modelType, data) {
     return { ...best, type: "3PH", changePoints: { heating: best.cp }, predict: (t) => best.beta[0] + best.beta[1] * Math.max(0, best.cp - t), paramLabels: ["β₀ (baseload)", "β₁ (heating slope)", `Tcp = ${best.cp.toFixed(1)}°F`] };
   }
   if (modelType === "5P") {
+    // If fixed changepoints provided, use them directly; otherwise grid search
+    if (fixedCPs && fixedCPs.cph != null && fixedCPs.cpc != null) {
+      const { cph, cpc } = fixedCPs;
+      const X = temps.map((t) => [1, Math.max(0, cph - t), Math.max(0, t - cpc)]);
+      const r = fitOLS(X, energy);
+      if (!r) return null;
+      return { ...r, cph, cpc, type: "5P", changePoints: { heating: cph, cooling: cpc }, predict: (t) => r.beta[0] + r.beta[1] * Math.max(0, cph - t) + r.beta[2] * Math.max(0, t - cpc), paramLabels: ["β₀ (baseload)", "β₁ (heating slope)", "β₂ (cooling slope)", `Tcp_h = ${cph.toFixed(1)}°F (manual)`, `Tcp_c = ${cpc.toFixed(1)}°F (manual)`] };
+    }
     let best = null, bestSS = Infinity;
     for (let cph = Math.min(...temps) + 3; cph <= Math.max(...temps) - 8; cph += 1) {
       for (let cpc = cph + 5; cpc <= Math.max(...temps) - 3; cpc += 1) {
@@ -426,12 +434,15 @@ export default function MVWorkbench() {
   const [showResiduals, setShowResiduals] = useState(false);
   const [showParams, setShowParams] = useState(true);
   const [fitError, setFitError] = useState(false);
+  const [manualBP, setManualBP] = useState(false);
+  const [heatBP, setHeatBP] = useState(55);
+  const [coolBP, setCoolBP] = useState(65);
 
   const dataset = datasetKey ? DATASETS[datasetKey] : null;
 
   const goStep = (s) => {
-    if (s === 0) { setDatasetKey(null); setModelType(null); setModelResult(null); }
-    if (s <= 1) { setModelType(null); setModelResult(null); }
+    if (s === 0) { setDatasetKey(null); setModelType(null); setModelResult(null); setManualBP(false); setHeatBP(55); setCoolBP(65); }
+    if (s <= 1) { setModelType(null); setModelResult(null); setManualBP(false); setHeatBP(55); setCoolBP(65); }
     setFitError(false);
     setStep(s);
   };
@@ -485,7 +496,7 @@ export default function MVWorkbench() {
       <main style={{ maxWidth: 1100, margin: "0 auto", padding: "28px 32px 60px" }}>
         {step === 0 && <StepScenario onSelect={(k) => { setDatasetKey(k); setStep(1); }} />}
         {step === 1 && dataset && <StepExplore dataset={dataset} onNext={() => setStep(2)} />}
-        {step === 2 && dataset && <StepCounterfactual dataset={dataset} datasetKey={datasetKey} modelType={modelType} fitError={fitError} onSelectModel={(k) => { setModelType(k); setFitError(false); }} onFit={() => { const r = fitModel(modelType, dataset.data); if (r) { setModelResult(r); setFitError(false); setStep(3); } else { setFitError(true); } }} />}
+        {step === 2 && dataset && <StepCounterfactual dataset={dataset} datasetKey={datasetKey} modelType={modelType} fitError={fitError} manualBP={manualBP} setManualBP={setManualBP} heatBP={heatBP} setHeatBP={setHeatBP} coolBP={coolBP} setCoolBP={setCoolBP} onSelectModel={(k) => { setModelType(k); setFitError(false); setManualBP(false); setHeatBP(55); setCoolBP(65); }} onFit={() => { const fixedCPs = (modelType === "5P" && manualBP) ? { cph: heatBP, cpc: coolBP } : null; const r = fitModel(modelType, dataset.data, fixedCPs); if (r) { setModelResult(r); setFitError(false); setStep(3); } else { setFitError(true); } }} />}
         {step === 3 && modelResult && <StepValidate dataset={dataset} result={modelResult} showResiduals={showResiduals} setShowResiduals={setShowResiduals} showParams={showParams} setShowParams={setShowParams} onNext={() => setStep(4)} onBack={() => { setModelResult(null); setStep(2); }} />}
         {step === 4 && modelResult && <StepSavings dataset={dataset} result={modelResult} />}
       </main>
@@ -572,7 +583,22 @@ function StepExplore({ dataset, onNext }) {
 /* ═══════════════════════════════════════════════════════════════════
    STEP 2 — COUNTERFACTUAL
    ═══════════════════════════════════════════════════════════════════ */
-function StepCounterfactual({ dataset, datasetKey, modelType, onSelectModel, onFit, fitError }) {
+function StepCounterfactual({ dataset, datasetKey, modelType, onSelectModel, onFit, fitError, manualBP, setManualBP, heatBP, setHeatBP, coolBP, setCoolBP }) {
+  // Live preview model for 5P manual mode
+  const livePreview = useMemo(() => {
+    if (modelType !== "5P" || !manualBP) return null;
+    if (heatBP >= coolBP - 4) return null;
+    return fitModel("5P", dataset.data, { cph: heatBP, cpc: coolBP });
+  }, [modelType, manualBP, heatBP, coolBP, dataset]);
+
+  const liveModelLine = useMemo(() => {
+    if (!livePreview) return null;
+    const minT = Math.min(...dataset.data.map((d) => d.temp)) - 5;
+    const maxT = Math.max(...dataset.data.map((d) => d.temp)) + 5;
+    const line = [];
+    for (let t = minT; t <= maxT; t += 0.5) line.push({ temp: t, energy: livePreview.predict(t) });
+    return line;
+  }, [livePreview, dataset]);
   // Model suitability hints based on dataset
   const hints = {
     heating: { "2P": "okay", "3PC": "poor", "3PH": "recommended", "5P": "okay" },
@@ -621,6 +647,85 @@ function StepCounterfactual({ dataset, datasetKey, modelType, onSelectModel, onF
           <Box type="concept" title="How the fitting works">
             <P>For models with change points, we can't use ordinary least squares directly because the change point makes the model nonlinear. Instead, we search: try every candidate change-point temperature (in 0.5°F increments), fit the linear portion with OLS at each candidate, and keep the change point that minimizes the sum of squared residuals. This is a grid search over a piecewise-linear model.</P>
           </Box>
+
+          {modelType === "5P" && (
+            <div style={{ marginTop: 16, background: C.amberDim, border: `1px solid ${C.amber}40`, borderRadius: 6, padding: "16px 18px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                <div style={{ fontFamily: "'IBM Plex Sans'", fontSize: 12, fontWeight: 700, color: C.amber, textTransform: "uppercase", letterSpacing: 1 }}>Balance Point Control</div>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <button onClick={() => setManualBP(false)} style={{ padding: "5px 12px", borderRadius: 4, border: `1px solid ${!manualBP ? C.amber : C.border}`, background: !manualBP ? `${C.amber}20` : C.surface, color: !manualBP ? C.amber : C.textDim, fontSize: 11, fontFamily: "'IBM Plex Sans'", fontWeight: !manualBP ? 700 : 400, cursor: "pointer" }}>Auto-detect</button>
+                  <button onClick={() => setManualBP(true)} style={{ padding: "5px 12px", borderRadius: 4, border: `1px solid ${manualBP ? C.amber : C.border}`, background: manualBP ? `${C.amber}20` : C.surface, color: manualBP ? C.amber : C.textDim, fontSize: 11, fontFamily: "'IBM Plex Sans'", fontWeight: manualBP ? 700 : 400, cursor: "pointer" }}>Set manually</button>
+                </div>
+              </div>
+
+              {!manualBP && (
+                <P style={{ fontSize: 12, margin: 0 }}>The fitter will grid-search all candidate change-point pairs and select the combination that minimises the sum of squared residuals. Switch to <strong>Set manually</strong> to explore how balance point choice affects model fit.</P>
+              )}
+
+              {manualBP && (
+                <div>
+                  <P style={{ fontSize: 12, marginBottom: 12 }}>Drag the sliders to set your heating and cooling balance points. Watch R² and CV(RMSE) update live — this is what the auto-detect grid search optimises for.</P>
+
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 14 }}>
+                    <div>
+                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                        <span style={{ fontFamily: "'IBM Plex Sans'", fontSize: 12, fontWeight: 600, color: C.amber }}>Heating BP</span>
+                        <span style={{ fontFamily: "'IBM Plex Mono'", fontSize: 13, fontWeight: 700, color: C.amber }}>{heatBP}°F</span>
+                      </div>
+                      <input type="range" min={30} max={70} step={1} value={heatBP}
+                        onChange={(e) => { const v = +e.target.value; setHeatBP(v); if (v >= coolBP - 4) setCoolBP(v + 5); }}
+                        style={{ width: "100%", accentColor: C.amber }} />
+                      <div style={{ display: "flex", justifyContent: "space-between", fontFamily: "'IBM Plex Mono'", fontSize: 10, color: C.textDim, marginTop: 2 }}>
+                        <span>30°F</span><span>70°F</span>
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                        <span style={{ fontFamily: "'IBM Plex Sans'", fontSize: 12, fontWeight: 600, color: C.orange }}>Cooling BP</span>
+                        <span style={{ fontFamily: "'IBM Plex Mono'", fontSize: 13, fontWeight: 700, color: C.orange }}>{coolBP}°F</span>
+                      </div>
+                      <input type="range" min={40} max={85} step={1} value={coolBP}
+                        onChange={(e) => { const v = +e.target.value; setCoolBP(v); if (v <= heatBP + 4) setHeatBP(v - 5); }}
+                        style={{ width: "100%", accentColor: C.orange }} />
+                      <div style={{ display: "flex", justifyContent: "space-between", fontFamily: "'IBM Plex Mono'", fontSize: 10, color: C.textDim, marginTop: 2 }}>
+                        <span>40°F</span><span>85°F</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {livePreview ? (
+                    <>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8, marginBottom: 12 }}>
+                        <div style={{ background: C.surface, borderRadius: 5, padding: "8px 12px", border: `1px solid ${C.border}` }}>
+                          <div style={{ fontSize: 10, color: C.textDim, fontFamily: "'IBM Plex Sans'", textTransform: "uppercase", letterSpacing: 0.5 }}>R²</div>
+                          <div style={{ fontSize: 17, fontWeight: 700, fontFamily: "'IBM Plex Mono'", color: livePreview.R2 >= 0.75 ? C.green : C.red }}>{livePreview.R2.toFixed(4)}</div>
+                        </div>
+                        <div style={{ background: C.surface, borderRadius: 5, padding: "8px 12px", border: `1px solid ${C.border}` }}>
+                          <div style={{ fontSize: 10, color: C.textDim, fontFamily: "'IBM Plex Sans'", textTransform: "uppercase", letterSpacing: 0.5 }}>CV(RMSE)</div>
+                          <div style={{ fontSize: 17, fontWeight: 700, fontFamily: "'IBM Plex Mono'", color: livePreview.cvRMSE <= 15 ? C.green : C.red }}>{Math.abs(livePreview.cvRMSE).toFixed(1)}%</div>
+                        </div>
+                        <div style={{ background: C.surface, borderRadius: 5, padding: "8px 12px", border: `1px solid ${C.border}` }}>
+                          <div style={{ fontSize: 10, color: C.textDim, fontFamily: "'IBM Plex Sans'", textTransform: "uppercase", letterSpacing: 0.5 }}>NMBE</div>
+                          <div style={{ fontSize: 17, fontWeight: 700, fontFamily: "'IBM Plex Mono'", color: Math.abs(livePreview.NMBE) <= 5 ? C.green : C.red }}>{livePreview.NMBE.toFixed(2)}%</div>
+                        </div>
+                      </div>
+                      <ResponsiveSVGScatter
+                        data={dataset.data} xKey="temp" yKey="energy"
+                        xLabel="Temperature (°F)" yLabel={`Energy (${dataset.unit})`}
+                        height={260} unit={dataset.unit}
+                        modelLine={liveModelLine}
+                        changePoints={{ heating: heatBP, cooling: coolBP }}
+                      />
+                    </>
+                  ) : (
+                    <div style={{ background: C.redDim, border: `1px solid ${C.red}40`, borderRadius: 4, padding: "8px 12px", fontSize: 11, color: C.red, fontFamily: "'IBM Plex Sans'" }}>
+                      ⚠ Heating BP must be at least 5°F below cooling BP.
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
           {fitError && (
             <div style={{ background: C.redDim, border: `1px solid ${C.red}40`, borderRadius: 4, padding: "10px 14px", marginTop: 12, fontSize: 12, color: C.red, fontFamily: "'IBM Plex Sans'" }}>
               <strong>Fitting failed.</strong> The solver couldn't find valid parameters for this model + dataset combination. The model form doesn't match the data — for example, a heating-only model can't fit cooling-dominant data because there's no heating slope to detect. Try a different model form.
