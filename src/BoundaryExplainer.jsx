@@ -491,8 +491,7 @@ export default function BoundaryExplainer({ onBack }) {
           The boundary decision intersects with the model form decision. A whole-facility boundary can use either statistical or physical models. Retrofit isolation can measure key parameters or monitor everything continuously. Each combination has different strengths.
         </P>
 
-        <OptionsGrid />
-
+      
         <Callout color={C.amber} label="Single-line diagrams">
           Before choosing a boundary, you need to understand the building's electrical distribution. A <strong>single-line diagram</strong> shows the path from utility meter to panels to end uses. It tells you where sub-meters can go, which loads are on which circuits, and whether isolation is even physically feasible. Without one, you're doing M&V blind.
         </Callout>
