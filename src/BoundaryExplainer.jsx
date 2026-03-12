@@ -308,33 +308,7 @@ function ComparisonTable() {
   );
 }
 
-// ── BOUNDARY × MODEL FORM GRID ────────────────────────────────
-function OptionsGrid() {
-  const options = [
-    { letter: "A", name: "Key Parameter Measurement", boundary: "Retrofit Isolation", method: "Measure key parameters, estimate the rest", example: "Measure lighting watts, stipulate hours", color: C.amber },
-    { letter: "B", name: "All Parameter Monitoring", boundary: "Retrofit Isolation", method: "Measure all parameters continuously", example: "Sub-meter on chiller: kW, flow, temps", color: C.orange },
-    { letter: "C", name: "Statistical Counterfactual", boundary: "Whole Facility", method: "Statistical model of utility meter data", example: "Monthly bills + weather → regression model", color: C.blue },
-    { letter: "D", name: "Physical / Simulation Model", boundary: "Whole Facility", method: "Calibrated simulation (EnergyPlus, etc.)", example: "Physics model calibrated to measured data", color: C.violet },
-  ];
 
-  return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 20 }}>
-      {options.map(o => (
-        <div key={o.letter} style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 8, padding: "16px 18px", borderTop: `3px solid ${o.color}` }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-            <div style={{ width: 32, height: 32, borderRadius: "50%", background: `${o.color}18`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'IBM Plex Mono'", fontWeight: 700, fontSize: 14, color: o.color }}>{o.letter}</div>
-            <div>
-              <div style={{ fontFamily: "'IBM Plex Sans'", fontSize: 13, fontWeight: 700, color: C.text }}>{o.name}</div>
-              <div style={{ fontFamily: "'IBM Plex Sans'", fontSize: 10, color: o.color, fontWeight: 600 }}>{o.boundary}</div>
-            </div>
-          </div>
-          <div style={{ fontFamily: "'IBM Plex Sans'", fontSize: 12, color: C.textSoft, lineHeight: 1.7, marginBottom: 8 }}>{o.method}</div>
-          <div style={{ fontFamily: "'IBM Plex Mono'", fontSize: 10, color: C.textDim, background: C.surfaceRaised, padding: "6px 10px", borderRadius: 4 }}>{o.example}</div>
-        </div>
-      ))}
-    </div>
-  );
-}
 
 // ── INTERACTIVE EFFECTS DIAGRAM ───────────────────────────────
 function InteractiveEffects() {
