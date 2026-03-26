@@ -180,8 +180,9 @@ function Landing({ onNavigate }) {
             { id: "architecture", label: "Architecture of Uncertainty", desc: "What we know, what we don't, and what ain't so. Epistemic vs. aleatory vs. ontological.", color: C.violet, tags: ["Epistemology", "False Certainties"] },
             { id: "simulation", label: "Simulation as Physical Model", desc: "When statistical models reach their limits, physics-based simulation picks up the thread.", color: C.teal, tags: ["EnergyPlus", "Bayesian Calibration"] },
             { id: "cvrmse", label: "CV(RMSE) Deep Dive", desc: "Why a model can pass every metric and still hide savings in the noise. The baseload trap, detectability, and when good isn't good enough.", color: C.green, tags: ["Baseload Trap", "Detectability"] },
+            { id: "counterfactual-builder", label: "Counterfactual Builder", desc: "Build a whole-building counterfactual step by step. Fit a baseline model, then walk through the reporting period month by month.", color: C.amber, tags: ["Whole Facility", "Regression", "Savings"], href: "https://mnvexample.streamlit.app" },
           ].map(item => (
-            <div key={item.id} onClick={() => onNavigate(item.id)} style={{
+            <div key={item.id} onClick={() => item.href ? window.open(item.href, "_blank") : onNavigate(item.id)} style={{
               background: C.card, border: `1px solid ${C.border}`, borderRadius: 8,
               padding: "20px 20px", cursor: "pointer", transition: "border-color 0.2s",
               borderTop: `3px solid ${item.color}`,
