@@ -35,37 +35,54 @@ function Callout({ color, label, children }) {
 }
 
 function SpectrumDiagram() {
-  const bands = [
-    { label: "Single\nRegression", sub: "1 variable", r2: "R² ~ 0.02", color: "#ef4444", w: 12 },
-    { label: "Change-Point\nModel", sub: "OAT + knees", r2: "R² ~ 0.13", color: "#f97316", w: 14 },
-    { label: "Multi-Variable\nRegression", sub: "+ schedule, occ.", r2: "R² ~ 0.90", color: "#eab308", w: 16 },
-    { label: "TOWT\n(48 bins)", sub: "time × temperature", r2: "R² ~ 0.99", color: "#22c55e", w: 18 },
-    { label: "Calibrated\nSimulation", sub: "physics + tuning", r2: "CV ≤ 15%", color: "#3b82f6", w: 20 },
-    { label: "First-Principles\nPhysics", sub: "heat transfer eqns", r2: "mechanistic", color: "#8b5cf6", w: 20 },
+  const empirical = [
+    { label: "Single\nRegression", sub: "1 variable", stat: "R² ~ 0.02", color: "#ef4444" },
+    { label: "Change-Point\nModel", sub: "OAT + knees", stat: "R² ~ 0.13", color: "#f97316" },
+    { label: "Multi-Variable\nRegression", sub: "+ schedule, occ.", stat: "R² ~ 0.90", color: "#eab308" },
+    { label: "TOWT\n(48 bins)", sub: "time × temperature", stat: "R² ~ 0.99", color: "#22c55e" },
   ];
+  const physical = [
+    { label: "First-Principles\nPhysics", sub: "heat transfer eqns", stat: "mechanistic", color: "#8b5cf6" },
+    { label: "Calibrated\nSimulation", sub: "physics + tuning", stat: "CV ≤ 15%", color: "#3b82f6" },
+    { label: "Surrogate\nModel", sub: "trained on simulation", stat: "fast approx.", color: "#22c55e" },
+  ];
+  const colStyle = (items, borderColor) => (
+    <div style={{ flex: 1 }}>
+      <div style={{ display: "flex", gap: 3 }}>
+        {items.map((b, i) => (
+          <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+            <div style={{ fontFamily: "'IBM Plex Mono'", fontSize: 8, color: b.color, fontWeight: 600, textAlign: "center", lineHeight: 1.2 }}>{b.stat}</div>
+            <div style={{ width: "100%", height: 44, borderRadius: 4, background: `linear-gradient(180deg, ${b.color}, ${b.color}90)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ fontFamily: "'IBM Plex Sans'", fontSize: 9, fontWeight: 700, color: "#fff", textAlign: "center", lineHeight: 1.2, whiteSpace: "pre-line" }}>{b.label}</div>
+            </div>
+            <div style={{ fontFamily: "'IBM Plex Sans'", fontSize: 8, color: C.textDim, textAlign: "center", lineHeight: 1.3 }}>{b.sub}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
   return (
     <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 8, padding: "20px 20px 16px", marginBottom: 20 }}>
-      <div style={{ fontFamily: "'IBM Plex Sans'", fontSize: 11, fontWeight: 700, color: C.textDim, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 14 }}>The Modeling Spectrum</div>
-
-      {/* Arrow bar */}
-      <div style={{ position: "relative", margin: "0 0 8px" }}>
-        <div style={{ display: "flex", gap: 3, alignItems: "flex-end" }}>
-          {bands.map((b, i) => (
-            <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
-              <div style={{ fontFamily: "'IBM Plex Mono'", fontSize: 8, color: b.color, fontWeight: 600, textAlign: "center", lineHeight: 1.2 }}>{b.r2}</div>
-              <div style={{ width: "100%", height: b.w * 2.2, borderRadius: 4, background: `linear-gradient(180deg, ${b.color}, ${b.color}90)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <div style={{ fontFamily: "'IBM Plex Sans'", fontSize: 9, fontWeight: 700, color: "#fff", textAlign: "center", lineHeight: 1.2, whiteSpace: "pre-line" }}>{b.label}</div>
-              </div>
-              <div style={{ fontFamily: "'IBM Plex Sans'", fontSize: 8, color: C.textDim, textAlign: "center", lineHeight: 1.3 }}>{b.sub}</div>
-            </div>
-          ))}
+      <div style={{ fontFamily: "'IBM Plex Sans'", fontSize: 11, fontWeight: 700, color: C.textDim, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 14 }}>Two Families of Models</div>
+      <div style={{ display: "flex", gap: 16 }}>
+        <div style={{ flex: 1, border: `1px solid ${C.border}`, borderRadius: 8, padding: "12px 12px 8px", borderTop: "3px solid #ef4444" }}>
+          <div style={{ fontFamily: "'IBM Plex Sans'", fontSize: 10, fontWeight: 700, color: "#ef4444", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 10, textAlign: "center" }}>Empirical — fits data</div>
+          {colStyle(empirical)}
+          <div style={{ fontFamily: "'IBM Plex Sans'", fontSize: 9, color: C.textDim, textAlign: "center", marginTop: 8, fontStyle: "italic" }}>Knows what the building does</div>
         </div>
-        {/* Labels below */}
-        <div style={{ display: "flex", justifyContent: "space-between", marginTop: 10, padding: "6px 0", borderTop: `1px solid ${C.border}` }}>
-          <span style={{ fontFamily: "'IBM Plex Sans'", fontSize: 10, fontWeight: 600, color: "#ef4444" }}>← Empirical</span>
-          <span style={{ fontFamily: "'IBM Plex Mono'", fontSize: 9, color: C.textDim }}>every variable must be causal</span>
-          <span style={{ fontFamily: "'IBM Plex Sans'", fontSize: 10, fontWeight: 600, color: "#8b5cf6" }}>Physical →</span>
+        <div style={{ display: "flex", alignItems: "center", flexDirection: "column", justifyContent: "center", gap: 4, padding: "0 4px" }}>
+          <div style={{ fontFamily: "'IBM Plex Sans'", fontSize: 18, color: C.textDim }}>≠</div>
+          <div style={{ fontFamily: "'IBM Plex Mono'", fontSize: 8, color: C.textDim, textAlign: "center", lineHeight: 1.3, maxWidth: 60 }}>different tools, not a spectrum</div>
         </div>
+        <div style={{ flex: 1, border: `1px solid ${C.border}`, borderRadius: 8, padding: "12px 12px 8px", borderTop: "3px solid #8b5cf6" }}>
+          <div style={{ fontFamily: "'IBM Plex Sans'", fontSize: 10, fontWeight: 700, color: "#8b5cf6", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 10, textAlign: "center" }}>Physical — solves equations</div>
+          {colStyle(physical)}
+          <div style={{ fontFamily: "'IBM Plex Sans'", fontSize: 9, color: C.textDim, textAlign: "center", marginTop: 8, fontStyle: "italic" }}>Knows why the building does it</div>
+          <div style={{ fontFamily: "'IBM Plex Mono'", fontSize: 8, color: "#8b5cf6", textAlign: "center", marginTop: 4 }}>physics → surrogate (simplifies down)</div>
+        </div>
+      </div>
+      <div style={{ marginTop: 10, padding: "6px 0", borderTop: `1px solid ${C.border}`, textAlign: "center" }}>
+        <span style={{ fontFamily: "'IBM Plex Mono'", fontSize: 9, color: C.textDim }}>A physics model can be simplified into a surrogate. Measured data never builds up to physics.</span>
       </div>
     </div>
   );
