@@ -147,7 +147,7 @@ const STEPS = [
     subtitle: "Time-of-Week and Temperature",
     desc: "The TOWT model fits a separate change-point regression for every hour of the week — 24 weekday bins and 24 weekend bins, each with its own intercept and slopes. R² = 0.994. The cloud becomes a crystal.",
     causal: "Every coefficient maps to a physical mechanism: the 8am weekday intercept reflects morning startup loads; the 2am weekend cooling slope reflects the sleeping building's shell response.",
-    mechanism: "With 48 bins, each capturing a distinct operational mode, you've effectively built a statistical approximation of the building's physics. Add enough causal variables and your empirical model converges toward a physical model.",
+    mechanism: "With 48 bins, each capturing a distinct operational mode, the TOWT model is the ceiling of what empirical modeling can achieve — superb at prediction, but it still can't tell you which wall is losing heat or which chiller is degrading. It knows what the building does, not why.",
     colorMode: "towt",
     modelType: "towt",
   },
@@ -508,10 +508,13 @@ export default function BeyondOneVariable({ onBack }) {
             Every variable you add must earn its place through <strong style={{ color: "#fff" }}>causal justification</strong> — a physical mechanism that explains <em>why</em> it drives energy consumption. Correlation alone is not enough.
           </p>
           <p style={{ fontFamily: "'IBM Plex Sans'", fontSize: 15, lineHeight: 1.8, color: "#e2e8f0", margin: "12px 0 0" }}>
-            Add enough causal variables — temperature, schedule, occupancy mode, interactions between them — and your statistical model begins to approximate the building's actual physics. The boundary between an <strong style={{ color: "#fff" }}>empirical model</strong> and a <strong style={{ color: "#fff" }}>physical model</strong> isn't a wall. It's a continuum. The TOWT model sits near the far end: 48 separate regressions, each grounded in a distinct operational mode of the building.
+            But even a TOWT model with R² = 0.994 is still <strong style={{ color: "#fff" }}>pattern recognition, not physics</strong>. It knows <em>what</em> the building does — brilliantly — but it can never tell you <em>why</em>. It can't identify which wall is losing heat, which chiller is degrading, or what happens if you change a component it's never seen. Measured data reveals correlation. Only a physics model — built from first principles — reveals causation.
+          </p>
+          <p style={{ fontFamily: "'IBM Plex Sans'", fontSize: 15, lineHeight: 1.8, color: "#e2e8f0", margin: "12px 0 0" }}>
+            Physics models can be <strong style={{ color: "#fff" }}>simplified into surrogates</strong> — regression-like approximations — but you cannot build up from data to physics. The statistical model and the physical model are <strong style={{ color: "#fff" }}>fundamentally different tools</strong>, not two ends of a continuum. The TOWT is the ceiling of empirical modeling. Physics is the floor of understanding.
           </p>
           <p style={{ fontFamily: "'IBM Plex Sans'", fontSize: 15, lineHeight: 1.8, color: "#94a3b8", margin: "12px 0 0", fontStyle: "italic" }}>
-            The question is never "how many variables can I add?" It's "can I explain the mechanism behind each one?"
+            The question is never "how many variables can I add?" It's "can I explain the mechanism behind each one?" And even then — the best statistical model only predicts. It never explains.
           </p>
         </div>
 

@@ -189,16 +189,16 @@ export default function SimulationExplainer({ onBack }) {
       {/* Content */}
       <div style={{ maxWidth: 800, margin: "0 auto", padding: "32px 32px 80px" }}>
 
-        <Section title="The Continuum, Not a Wall" color={C.violet}>
+        <Section title="Two Fundamentally Different Tools" color={C.violet}>
           <P>
-            In the <strong>Beyond One Variable</strong> explainer, we watched R² climb from 0.02 to 0.994 by adding causal variables: temperature, day type, occupancy schedule, interaction terms, and finally 48 time-of-week bins. Each variable earned its place through a physical mechanism — not just correlation.
+            In the <strong>Beyond One Variable</strong> explainer, we watched R² climb from 0.02 to 0.994 by adding causal variables. The TOWT model, with 48 separate change-point regressions, is a remarkable achievement in pattern capture. But even at R² = 0.994, it is still <strong>pattern recognition, not physics</strong>. It knows <em>what</em> the building does. It cannot tell you <em>why</em>.
           </P>
           <P>
-            That progression reveals something important: <strong>the boundary between a statistical model and a physical model isn't a wall. It's a spectrum.</strong> At one end, you're fitting curves to data. At the other, you're solving heat transfer equations. Every step in between adds more physics.
+            A physics model starts from the other direction entirely. It begins with <strong>first principles</strong> — heat transfer equations, thermodynamic relationships, material properties — and predicts energy use from the physics up. It doesn't need historical data to exist. It knows why before it knows what.
           </P>
           <SpectrumDiagram />
           <P>
-            The TOWT model, with its 48 separate change-point regressions, is already encoding real physics — it just does it implicitly through data rather than explicitly through equations. A simulation model like EnergyPlus does the opposite: it starts from first principles (conduction, convection, radiation, air mass flow) and builds predictions from the physics up.
+            These are not two ends of a continuum. They are <strong>fundamentally different tools</strong>. A physics model can be simplified into a surrogate — a regression-like approximation trained on simulation outputs. But you cannot build up from measured data to physics. No amount of regression will tell you which wall is losing heat, which chiller is degrading, or what happens under conditions the building has never experienced. Measured data reveals correlation. Physics reveals causation.
           </P>
         </Section>
 
@@ -296,10 +296,10 @@ export default function SimulationExplainer({ onBack }) {
         <div style={{ background: "linear-gradient(135deg, #3d3529, #3d3529)", borderRadius: 8, padding: "28px 28px", color: "#fff", marginBottom: 24 }}>
           <div style={{ fontFamily: "'IBM Plex Sans'", fontSize: 11, fontWeight: 700, letterSpacing: 2, color: C.violet, textTransform: "uppercase", marginBottom: 12 }}>The Big Idea</div>
           <P style={{ fontSize: 15, color: "#e2e8f0", margin: "0 0 12px" }}>
-            A statistical model learns <em>what</em> the building does. A physical model encodes <em>why</em>.
+            A statistical model captures <em>what</em> a building does. A physical model encodes <em>why</em>. These are not points on a spectrum — they are fundamentally different kinds of knowledge.
           </P>
           <P style={{ fontSize: 15, color: "#e2e8f0", margin: "0 0 12px" }}>
-            The TOWT model with 48 bins and R² = 0.994 is a remarkable achievement in pattern capture — but it can't tell you which wall is losing heat or which chiller is degrading. A calibrated EnergyPlus model with CV(RMSE) = 10% might fit the data less tightly, but it <strong style={{ color: "#fff" }}>knows which parameters are uncertain and by how much</strong>.
+            Physics models start from first principles and can be <strong style={{ color: "#fff" }}>simplified into surrogates</strong> — regression-like approximations trained on simulation outputs. But measured data never builds up to physics. The TOWT model with R² = 0.994 is the ceiling of empirical modeling. A calibrated EnergyPlus model might fit less tightly, but it <strong style={{ color: "#fff" }}>knows which parameters are uncertain and by how much</strong> — and it can predict what happens under conditions the building has never experienced.
           </P>
           <P style={{ fontSize: 15, color: "#94a3b8", margin: 0, fontStyle: "italic" }}>
             The frontier isn't choosing between them. It's knowing when each is the right tool — and having the infrastructure to use both.
