@@ -9,7 +9,7 @@ const C = {
 };
 
 const SITES = [
-  { id: "cf", label: "Counterfactual\nDesigns", sub: "The Course", url: "https://cfdesigns.vercel.app", color: C.copper, x: 400, y: 120, r: 52 },
+  { id: "cf", label: "Design\nStudio", sub: "The Course", url: "https://cfdesigns.vercel.app", color: C.copper, x: 400, y: 120, r: 52 },
   { id: "bay", label: "Bayesian\nM&V Module", sub: "Part 3", url: "https://bayesian-mv.vercel.app", color: C.violet, x: 160, y: 240, r: 44 },
   { id: "mv", label: "IPMVP\nReference", sub: "Translation Guide", url: "https://mv-course.vercel.app", color: C.amber, x: 640, y: 240, r: 44 },
   { id: "map", label: "Learning\nPath", sub: "Progress Tracker", url: "https://mv-classmap.vercel.app", color: C.green, x: 220, y: 400, r: 40 },
@@ -63,7 +63,7 @@ export default function EcosystemMap({ onBack }) {
       <div style={{ maxWidth: 900, margin: "0 auto", padding: "24px 32px 0" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
           <button onClick={onBack} style={{ background: "none", border: "none", color: C.copper, fontSize: 14, cursor: "pointer", fontFamily: "'IBM Plex Sans', sans-serif", fontWeight: 600, padding: 0 }}>
-            &larr; Counterfactual Designs
+            &larr; Design Studio
           </button>
           <div style={{ fontSize: 11, color: C.textDim, letterSpacing: 2, textTransform: "uppercase" }}>
             Ecosystem Map

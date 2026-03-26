@@ -79,7 +79,7 @@ function ToolWrapper({ children, onHome, onSwitch, switchLabel, current }) {
       <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 24px", borderBottom: `1px solid ${C.border}`, background: C.surface, fontFamily: "'IBM Plex Sans', sans-serif" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <button onClick={onHome} style={{ background: "none", border: "none", cursor: "pointer", color: C.teal, fontSize: 13, fontWeight: 600, fontFamily: "'IBM Plex Sans'", padding: 0 }}>← CF Designs</button>
+          <button onClick={onHome} style={{ background: "none", border: "none", cursor: "pointer", color: C.teal, fontSize: 13, fontWeight: 600, fontFamily: "'IBM Plex Sans'", padding: 0 }}>← Design Studio</button>
           <span style={{ color: C.border }}>|</span>
           <span style={{ fontSize: 12, color: C.textDim }}>
             {current === "fundamentals" ? "Part 1: Statistical Foundations" : "Part 2: Counterfactual Workbench"}
@@ -104,10 +104,10 @@ function Landing({ onNavigate }) {
       <div style={{ borderBottom: `1px solid ${C.border}`, padding: "72px 32px 64px", background: `linear-gradient(180deg, ${C.surface} 0%, ${C.bg} 100%)` }}>
         <div style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
           <div style={{ fontSize: 11, letterSpacing: 5, color: C.teal, fontWeight: 600, textTransform: "uppercase", marginBottom: 20, fontFamily: "'IBM Plex Mono', monospace" }}>
-            Counterfactual Designs
+            Counterfactual Design Studio
           </div>
           <h1 style={{ fontSize: 36, fontWeight: 700, color: C.white, margin: "0 0 20px", letterSpacing: -0.5, lineHeight: 1.2 }}>
-            Statistical Modeling for<br />Measurement & Verification
+            Modeling, Uncertainty & Professional Practice<br />for Measurement & Verification
           </h1>
           <p style={{ fontSize: 16, color: C.textSoft, lineHeight: 1.75, maxWidth: 560, margin: "0 auto 16px" }}>
             You know <strong style={{ color: C.white }}>what</strong> a counterfactual is supposed to do — but could you build one, validate it, and defend it in a project review? This course gets you there.
